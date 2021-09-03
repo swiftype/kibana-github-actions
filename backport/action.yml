@@ -22,6 +22,14 @@ inputs:
     description: ''
     required: false
     default: 'node scripts/backport --pr %pullNumber%'
+  auto_approve:
+    description: Enable auto-approve for created backport PRs
+    required: false
+    default: 'false'
+  approver_token:
+    description: An oauth token that will be used to approve the backport pull requests
+    required: false
+
 runs:
   using: 'node12'
   main: 'index.js'
