@@ -113,6 +113,9 @@ async function backport() {
   const autoMergeMethod = core.getInput('auto_merge_method', { required: true });
   const backportCommandTemplate = core.getInput('manual_backport_command_template', { required: true });
 
+  const approverToken = core.getInput('approver_token');
+  const autoApprove = core.getInput('auto_approve') === 'true';
+
   await exec(`git config --global user.name "${commitUser}"`);
   await exec(`git config --global user.email "${commitEmail}"`);
 
@@ -131,15 +134,17 @@ async function backport() {
     autoMergeMethod: autoMergeMethod,
   });
 
-  backportResponse.results
-        .map(async (result) => {
-      var _a;
-      if (result.pullRequestUrl) {
-        _a = result.pullRequestUrl.split('/')[6];
-        const backportPullNumber = parseInt(_a);
-        await approve(accessToken, github.context, backportPullNumber);
-      }
-  });
+  if (autoApprove) {
+    backportResponse.results
+            .map(async (result) => {
+        var _a;
+        if (result.pullRequestUrl) {
+            _a = result.pullRequestUrl.split('/')[6];
+            const backportPullNumber = parseInt(_a);
+            await approve(approverToken, github.context, backportPullNumber);
+        }
+    });
+  }
 
   await createStatusComment({
     accessToken,
