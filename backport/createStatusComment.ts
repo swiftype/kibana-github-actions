@@ -12,7 +12,7 @@ export const getCommentFromResponse = (
   const hasAnySuccessful = backportResponse.results.some((r) => r.success);
   const hasAllSuccessful = backportResponse.results.every((r) => r.success);
 
-  const header = backportResponse.success ? '## 💚 Backport successful' : '## 💔 Backport failed';
+  const header = backportResponse.success ? '## 💚 Backport PR(s) successfully created' : '## 💔 Failed to create backport PR(s)';
 
   const tableHeader = `| Status | Branch | Result |\n|:------:|:------:|:------:|\n`;
   const tableBody = backportResponse.results
@@ -21,7 +21,7 @@ export const getCommentFromResponse = (
       const backportPullNumber = result.pullRequestUrl?.split('/')[6];
 
       if (result.success) {
-        return `| ✅ |  [${result.targetBranch}](${result.pullRequestUrl})  | [<img src="https://img.shields.io/github/pulls/detail/state/${repoOwner}/${repoName}/${backportPullNumber}">](${result.pullRequestUrl}) |`;
+        return `| ✅ |  [${result.targetBranch}](${result.pullRequestUrl})  | ${result.pullRequestUrl} |`;
       }
 
       return `| ❌ |  ${result.targetBranch}  | ${result.errorMessage} |`;
